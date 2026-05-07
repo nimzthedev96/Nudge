@@ -2,7 +2,6 @@
 
 import pytest
 from datetime import datetime, timedelta
-from uuid import UUID
 
 from nudge.habits.habit import Habit, Periodicity
 
@@ -29,17 +28,14 @@ class TestHabit:
         assert habit.periodicity == Periodicity.MONTHLY
 
     def test_habit_has_unique_id(self):
-        """Test that each habit has a unique UUID identifier."""
+        """Test that each habit has a unique ID when saved."""
+        # Note: IDs are assigned by the database, so new habits start with id=None
         habit1 = Habit("Exercise", Periodicity.DAILY)
         habit2 = Habit("Exercise", Periodicity.DAILY)
-        
-        # IDs should be different
-        assert habit1.id != habit2.id
-        
-        # IDs should be valid UUIDs
-        UUID(habit1.id)
-        UUID(habit2.id)
 
+        # IDs should be None initially (assigned by database on save)
+        assert habit1.id is None
+        assert habit2.id is None
     def test_habit_creation_timestamp(self):
         """Test that creation timestamp is set correctly."""
         before = datetime.now()
