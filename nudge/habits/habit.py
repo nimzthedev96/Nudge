@@ -2,8 +2,7 @@
 
 from datetime import datetime
 from enum import StrEnum
-from uuid import uuid4
-from typing import List
+from typing import List, Optional
 
 
 class Periodicity(StrEnum):
@@ -25,7 +24,7 @@ class Habit:
             name: Task description for the habit.
             periodicity: Frequency of the habit (Periodicity enum value).
         """
-        self.id = str(uuid4())
+        self.id: Optional[int] = None  # Set by database on save
         self.name = name
         self.periodicity = periodicity
         self.creation_timestamp = datetime.now()
