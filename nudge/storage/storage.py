@@ -11,7 +11,7 @@ from nudge.habits.habit import Habit, Periodicity
 class Storage:
     """Service class for managing storage of habits and database operations."""
 
-    def __init__(self, db_path: str = "nudge_habits.db", auto_seed: bool = True) -> None:
+    def __init__(self, db_path: str = "nudge_habits.db", auto_seed: bool = False) -> None:
         """
         Initialize the Storage service.
 

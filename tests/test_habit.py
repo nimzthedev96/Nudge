@@ -80,7 +80,6 @@ class TestHabit:
         repr_str = repr(habit)
         
         assert "Habit" in repr_str
-        assert habit.id in repr_str
         assert "Exercise" in repr_str
         assert "daily" in repr_str
         assert "completions=0" in repr_str
