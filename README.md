@@ -8,7 +8,7 @@ A simple habit tracking application built with Python and SQLite for managing an
 nudge/
 ├── habits/              # Core habit class (Habit)
 ├── habit_manager/       # Service class for managing habits (HabitManager)
-├── storage/       # Service class for database operations (Storage)
+├── storage/             # Service class for database operations (Storage)
 ├── analytics/           # Functional analytics and statistics
 ├── cli/                 # Command-line interface
 └── __init__.py
@@ -20,10 +20,18 @@ tests/                   # Unit tests (pytest)
 
 - Python 3.11+
 - SQLite3 (included with Python)
+- pytest (for testing)
 
-## Setup
+## Installation
 
-### 1. Create Virtual Environment
+### 1. Clone the Repository
+
+```bash
+git clone <repository-url>
+cd nudge
+```
+
+### 2. Create Virtual Environment
 
 ```bash
 # Windows
@@ -35,7 +43,7 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-### 2. Install Dependencies
+### 3. Install Dependencies
 
 ```bash
 pip install -r requirements.txt
@@ -77,8 +85,20 @@ pytest -v
 ## Project Components
 - TODO
 
-## Database
-- TODO
+
+## Database Schema
+
+### Habits Table
+- `id` (INTEGER, PRIMARY KEY): Auto-incremented unique identifier
+- `name` (TEXT): Habit description
+- `periodicity` (TEXT): 'daily', 'weekly', or 'monthly'
+- `creation_timestamp` (INTEGER): Unix timestamp of habit creation
+
+### Habit Completions Table
+- `id` (INTEGER, PRIMARY KEY): Auto-incremented record ID
+- `habit_id` (INTEGER, FOREIGN KEY): Reference to habits table
+- `completion_timestamp` (INTEGER): Unix timestamp of completion
+
 
 ## Development Notes
 
