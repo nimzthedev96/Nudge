@@ -10,4 +10,7 @@ class TestCLI:
 
     def test_main_runs(self):
         """Test CLI entry point."""
+        
+    def test_display_menu(self):
+        """Test that the menu displays correctly."""
         pass

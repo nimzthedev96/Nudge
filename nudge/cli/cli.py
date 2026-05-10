@@ -11,11 +11,6 @@ from rich.text import Text
 from nudge.nudge_utils.motivational import (
     get_daily_quote,
     get_completion_message,
-    get_pending_reminder,
-    calculate_streak,
-    get_achievement_message,
-    calculate_completion_rate,
-    get_progress_feedback,
 )
 
 console = Console()
