@@ -126,6 +126,43 @@ class Storage:
 
         conn.close()
         return habit
+    
+    def load_habit_by_name(self, habit_name: str) -> Optional[Habit]:
+        """
+        Load a habit from the database.
+
+        Args:
+            habit_name: The name of the habit to load.
+
+        Returns:
+            The Habit object or None if not found.
+        """
+        conn = self._get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute("SELECT * FROM habits WHERE name = ?", (habit_name,))
+        row = cursor.fetchone()
+
+        if not row:
+            conn.close()
+            return None
+
+        habit = Habit(row["name"], Periodicity(row["periodicity"]))
+        habit.id = row["id"]
+        habit.creation_timestamp = datetime.fromtimestamp(row["creation_timestamp"])
+
+        # Load completion timestamps
+        cursor.execute(
+            "SELECT completion_timestamp FROM habit_completions WHERE habit_id = ? ORDER BY completion_timestamp",
+            ( habit.id,),
+        )
+        completions = cursor.fetchall()
+        habit.completion_timestamps = [
+            datetime.fromtimestamp(comp["completion_timestamp"]) for comp in completions
+        ]
+
+        conn.close()
+        return habit
 
     def load_all_habits(self) -> List[Habit]:
         """

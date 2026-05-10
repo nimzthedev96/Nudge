@@ -1,6 +1,6 @@
 """Command-line interface for Nudge application."""
 
-def main():
+def main(manager):
     """Main CLI entry point."""
     pass
 

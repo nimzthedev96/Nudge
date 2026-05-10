@@ -1,6 +1,10 @@
 """Entry point for Nudge application."""
 
-from nudge.cli import main
+from nudge.storage.storage import Storage
+from nudge.habit_manager.habit_manager import HabitManager
+from nudge.cli import main as cli_main
 
 if __name__ == "__main__":
-    main()
+    storage = Storage("nudge_habits.db")
+    manager = HabitManager(storage)
+    cli_main(manager)
