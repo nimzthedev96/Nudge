@@ -3,7 +3,6 @@
 import random
 from datetime import datetime, date, timedelta
 
-
 DAILY_QUOTES = [
     "Every small step counts. You're building a better version of yourself! 🌱",
     "Progress, not perfection. Keep going! 💪",

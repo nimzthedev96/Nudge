@@ -30,6 +30,30 @@ class HabitManager:
 
         habit = self.storage.load_habit_by_name(name)
         habit.mark_complete()
-        self.storage.save_completion(habit.id, datetime.now())
-        
+        self.storage.save_completion(habit.id, datetime.datetime.now())
+    
+    def calculate_streak(self, habit):
+        """Calculate the current streak for a habit."""
+        if not habit.completion_timestamps:
+            return 0
+
+        # Sort timestamps in descending order
+        timestamps = sorted(habit.completion_timestamps, reverse=True)
+        streak = 0
+        if (datetime.datetime.now() - timestamps[0]).days <= 1:
+            streak = 1
+        today = datetime.datetime.now().date()
+
+        # Go through the timestamps and count consecutive days
+        # TODO: Adjust logic for weekly and monthly habits
+        for i in range(1, len(timestamps)):
+            current_date = timestamps[i].date()
+            previous_date = timestamps[i - 1].date()
+
+            if (previous_date - current_date).days == 1:
+                streak += 1
+            elif (today - current_date).days > 1:
+                break
+
+        return streak
 

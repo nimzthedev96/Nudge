@@ -8,7 +8,8 @@ from rich.table import Table
 from rich.panel import Panel
 from rich.text import Text
 
-from nudge.nudge_utils.motivational import (
+from nudge.cli.motivational import (
+    ENCOURAGEMENT_MESSAGES,
     get_daily_quote,
     get_completion_message,
 )
@@ -42,8 +43,8 @@ def display_today_view(manager):
         table.add_column("Status", style="white")
         
         for habit in habits:
-            streak = calculate_streak(habit.completion_timestamps)
             status_style = "[green]✓ Done[/green]" if is_completed_today(habit) else "[yellow]⚪ Pending[/yellow]"
+            streak = manager.calculate_streak(habit)
             table.add_row(
                 habit.name,
                 habit.periodicity.value,
@@ -85,7 +86,7 @@ def main(manager):
         )
     )
     
-    # Display daily quote
+    # Display daily motivational quote
     quote = get_daily_quote()
     console.print(f"\n[italic cyan]{quote}[/italic cyan]\n")
 
@@ -148,23 +149,17 @@ def mark_complete(manager):
         # Get the habit to show streak achievement
         habit = manager.storage.load_habit_by_name(name)
         if habit:
-            streak = calculate_streak(habit.completion_timestamps)
-            achievement = get_achievement_message(streak)
-            
             # Show completion message
             completion_msg = get_completion_message()
             console.print(f"\n[green]{completion_msg}[/green]")
-            
             console.print(f"[green]✓ Habit '[bold]{name}[/bold]' marked as complete![/green]")
-        else:
-    
-            console.print(f"[cyan]📈 Current streak: {streak} days![/cyan]")
-            
-            # Show achievement if milestone reached
-            if achievement:
-                console.print(f"\n[bold magenta]{achievement}[/bold magenta]")
-        
-        console.print(f"[green]✓ Habit '[bold]{name}[/bold]' marked as complete![/green]")
+         
+            # Check for streak milestones and show a nice message if achieved
+            streak = manager.calculate_streak(habit)
+            if streak in [1, 3, 7, 14, 30, 60, 100]: 
+                encouragement_msg = ENCOURAGEMENT_MESSAGES.get(streak, "")
+                if encouragement_msg:
+                    console.print(f"\n[bold magenta]{encouragement_msg}[/bold magenta]")
     except Exception as e:
         console.print(f"[red]✗ Error: {e}[/red]")
 
