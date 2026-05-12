@@ -1,20 +1,15 @@
-# Nudge - Habit Tracking Application
+# Nudge - A Gentle Habit Tracking Application
 
-A simple habit tracking application built with Python and SQLite for managing and analyzing daily habits.
+A gentle habit tracking application built with Python and SQLite for managing and analyzing daily habits. Built for a university project.
 
-## Project Structure
+## Features
 
-```
-nudge/
-├── habits/              # Core habit class (Habit)
-├── habit_manager/       # Service class for managing habits (HabitManager)
-├── storage/             # Service class for database operations (Storage)
-├── analytics/           # Functional analytics and statistics
-├── cli/                 # Command-line interface
-└── __init__.py
-
-tests/                   # Unit tests (pytest)
-```
+- Habit creation and tracking
+- Streak tracking per habit
+- Analytics
+- Supportive messages (nudges) to encourage habit completion
+- Easy to use interface
+- Convinient summary view
 
 ## Requirements
 
@@ -27,7 +22,7 @@ tests/                   # Unit tests (pytest)
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone github.com/nimzthedev96/Nudge
 cd nudge
 ```
 
@@ -61,8 +56,8 @@ python main.py --help
 python -m nudge.cli --help
 ```
 
-### CLI Commands
-- TODO
+### Using the Application
+Nudge offers an interactive command line interface, allowing the user to easily create habits, mark habits as complete and run analytics. Choose a menu option and start tracking your habits today!
 
 ## Testing
 
@@ -82,9 +77,22 @@ pytest tests/test_habit.py
 pytest -v
 ```
 
-## Project Components
-- TODO
+## Project Structure
 
+```
+nudge/
+├── analytics/           # Functional analytics and statistics
+├── cli/                 # Command-line interface
+├── habits/              # Core habit class (Habit)
+├── habit_manager/       # Service class for managing habits (HabitManager)
+├── storage/             # Service class for database operations (Storage)
+tests/                   # Unit tests (pytest)
+```
+
+## Project Components
+- HabitManager: Service class acts as an API to the CLI
+- CLI: Service class for CLI interactions and UI
+- Storage: Service class for database operations
 
 ## Database Schema
 
@@ -92,18 +100,11 @@ pytest -v
 - `id` (INTEGER, PRIMARY KEY): Auto-incremented unique identifier
 - `name` (TEXT): Habit description
 - `periodicity` (TEXT): 'daily', 'weekly', or 'monthly'
-- `creation_timestamp` (INTEGER): Unix timestamp of habit creation
+- `creation_timestamp` (DATETIME): Unix timestamp of habit creation
 
 ### Habit Completions Table
 - `id` (INTEGER, PRIMARY KEY): Auto-incremented record ID
 - `habit_id` (INTEGER, FOREIGN KEY): Reference to habits table
-- `completion_timestamp` (INTEGER): Unix timestamp of completion
-
-
-## Development Notes
-
-- Keep dependencies minimal for simplicity
-- Use functional programming patterns in analytics module
-- All code includes docstrings for documentation
+- `completion_timestamp` (DATETIME): Unix timestamp of completion
 
 
