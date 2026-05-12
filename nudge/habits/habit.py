@@ -11,6 +11,10 @@ class Periodicity(StrEnum):
     DAILY = "daily"
     WEEKLY = "weekly"
     MONTHLY = "monthly"
+    ONCE_WEEKLY = "once_weekly"
+    TWICE_WEEKLY = "twice_weekly"
+    ONCE_MONTHLY = "once_monthly"
+    TWICE_MONTHLY = "twice_monthly"
 
 
 class Habit:

@@ -204,7 +204,7 @@ def delete_habit(manager):
     console.print("\n[bold red]--- Delete Habit ---[/bold red]")
     console.print("[yellow]TODO: Implement delete functionality[/yellow]")
 
-
+# Allow this script to be run directly for testing purposes
 if __name__ == "__main__":
     from nudge.storage.storage import Storage
     from nudge.habit_manager.habit_manager import HabitManager

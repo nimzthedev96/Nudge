@@ -44,16 +44,46 @@ class HabitManager:
             streak = 1
         today = datetime.datetime.now().date()
 
-        # Go through the timestamps and count consecutive days
-        # TODO: Adjust logic for weekly and monthly habits
-        for i in range(1, len(timestamps)):
-            current_date = timestamps[i].date()
-            previous_date = timestamps[i - 1].date()
+        # Calculate streaks based on periodicity
+        match habit.periodicity:
+            case habit.periodicity.DAILY:
+                for i in range(1, len(timestamps)):
+                  current_date = timestamps[i].date()
+                  previous_date = timestamps[i - 1].date()
 
-            if (previous_date - current_date).days == 1:
-                streak += 1
-            elif (today - current_date).days > 1:
-                break
+                  if (previous_date - current_date).days == 1:
+                      streak += 1
+                  elif (today - current_date).days > 1:
+                       break
+                  
+            case habit.periodicity.WEEKLY:
+                for i in range(1, len(timestamps)):
+                    current_date = timestamps[i]
+                    previous_date = timestamps[i - 1]
+  
+                    if (previous_date - current_date).days == 7:
+                        streak += 1  
+                    elif (previous_date - current_date).days > 7:
+                        break
 
+            case habit.periodicity.ONCE_WEEKLY:
+                for i in range(1, len(timestamps)):
+                    current_week = timestamps[i].isocalendar()[1]
+                    previous_week = timestamps[i - 1].isocalendar()[1]
+                   
+                    if (previous_week - current_week) == 1:
+                        streak += 1
+                    elif (today.isocalendar()[1] - current_week) > 1:
+                        break
+
+            case habit.periodicity.ONCE_MONTHLY:
+                 for i in range(1, len(timestamps)):
+                    current_month = timestamps[i].month
+                    previous_month = timestamps[i - 1].month
+
+                    if (previous_month - current_month) == 1:
+                        streak += 1
+                    elif (today.month - current_month) > 1:
+                        break
         return streak
 

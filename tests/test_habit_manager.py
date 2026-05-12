@@ -9,6 +9,7 @@ from nudge.habit_manager import HabitManager
 from nudge.habits.habit import Habit, Periodicity
 from nudge.storage.storage import Storage
 
+# TODO: Add tests for once_weekly, twice_weekly, once_monthly, and twice_monthly periodicities 
 
 class TestHabitManager:
     """Test cases for the HabitManager class."""
@@ -100,21 +101,42 @@ class TestHabitManager:
 
     def test_calculate_streak_no_completions(self, habit_manager):
         """Test calculating streak with no completions."""
+        # Daily
         habit = Habit("Exercise", Periodicity.DAILY)
         streak = habit_manager.calculate_streak(habit)
         assert streak == 0
+        # Weekly
+        habit = Habit("Read", Periodicity.WEEKLY)
+        streak = habit_manager.calculate_streak(habit)
+        assert streak == 0
+        # Monthly
+        habit = Habit("Meditate", Periodicity.MONTHLY)
+        streak = habit_manager.calculate_streak(habit)
+        assert streak == 0
 
-    def test_calculate_streak_single_completion_today(self, habit_manager):
+    def test_calculate_streak_single_completion_today_only(self, habit_manager):
         """Test calculating streak with a single completion today."""
+        # Daily
         habit = Habit("Exercise", Periodicity.DAILY)
         habit.mark_complete()
-        
         streak = habit_manager.calculate_streak(habit)
         assert streak == 1
 
-    def test_calculate_streak_consecutive_days(self, habit_manager):
+        # Weekly 
+        habit = Habit("Read", Periodicity.WEEKLY)
+        habit.mark_complete()
+        streak = habit_manager.calculate_streak(habit)
+        assert streak == 1
+
+        # Monthly
+        habit = Habit("Meditate", Periodicity.MONTHLY)
+        habit.mark_complete()
+        streak = habit_manager.calculate_streak(habit)
+        assert streak == 1
+
+    def test_calculate_streak_consecutive_days_daily(self, habit_manager):
         """Test calculating streak over consecutive days."""
-        habit = Habit("Exercise", Periodicity.DAILY)
+        habit = Habit("Journal", Periodicity.DAILY)
         
         # Simulate completions over 3 consecutive days
         today = datetime.datetime.now()
@@ -127,7 +149,37 @@ class TestHabitManager:
         streak = habit_manager.calculate_streak(habit)
         assert streak == 3
 
-    def test_calculate_streak_broken_by_missed_day(self, habit_manager):
+    def test_calculate_streak_consecutive_sameday_weekly(self, habit_manager):
+        """Test calculating streak over consecutive weeks where completions are on the same day of the week."""
+        habit = Habit("Prayer", Periodicity.WEEKLY)
+        
+        # Simulate completions over 3 consecutive weeks (7 days apart)
+        today = datetime.datetime.now()
+        habit.completion_timestamps = [
+            today,
+            today - datetime.timedelta(weeks=1),
+            today - datetime.timedelta(weeks=2),
+        ]
+        
+        streak = habit_manager.calculate_streak(habit)
+        assert streak == 3
+
+    def test_calculate_streak_consecutive_different_days_weekly_breaks_streak(self, habit_manager):
+        """Test calculating streak over consecutive weeks where different day breaks a streak."""
+        habit = Habit("Exercise", Periodicity.WEEKLY)
+        
+        # Simulate completions over 3 consecutive weeks but on different days
+        today = datetime.datetime.now()
+        habit.completion_timestamps = [
+            today,
+            today - datetime.timedelta(weeks=1) , 
+            today - datetime.timedelta(weeks=2) - datetime.timedelta(days=1), 
+        ]
+        
+        streak = habit_manager.calculate_streak(habit)
+        assert streak == 2
+
+    def test_calculate_streak_broken_by_missed_day_daily(self, habit_manager):
         """Test that streak is broken when a day is missed."""
         habit = Habit("Exercise", Periodicity.DAILY)
         
@@ -142,7 +194,7 @@ class TestHabitManager:
         streak = habit_manager.calculate_streak(habit)
         assert streak == 1  # Only today's completion counts
 
-    def test_calculate_streak_with_old_completions(self, habit_manager):
+    def test_calculate_streak_with_old_completions_daily(self, habit_manager):
         """Test that old completions don't affect current streak."""
         habit = Habit("Exercise", Periodicity.DAILY)
         
@@ -157,7 +209,7 @@ class TestHabitManager:
         streak = habit_manager.calculate_streak(habit)
         assert streak == 1  # Only today counts; older ones are too far back
 
-    def test_calculate_streak_yesterday_completion(self, habit_manager):
+    def test_calculate_streak_yesterday_completion_daily(self, habit_manager):
         """Test streak when last completion was yesterday."""
         habit = Habit("Exercise", Periodicity.DAILY)
         
