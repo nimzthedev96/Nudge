@@ -46,7 +46,7 @@ def display_today_view(manager):
         
         for habit in habits:
             status_style = "[green]✓ Done[/green]" if is_completed_today(habit) else "[yellow]Pending[/yellow]"
-            streak = manager.calculate_streak(habit)
+            streak = habit.current_streak()
             streak_type = "days" if habit.periodicity == "daily" else "weeks" if habit.periodicity in ["weekly", "weekly_fixed_day"] else "months"
             if streak == 1:
                 streak_type = streak_type[:-1]  # Strip the s for singular form
