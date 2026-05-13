@@ -9,7 +9,7 @@ A gentle habit tracking application built with Python and SQLite for managing an
 - Analytics
 - Supportive messages (nudges) to encourage habit completion
 - Easy to use interface
-- Convinient summary view
+- Convenient summary view
 
 ## Requirements
 
@@ -47,13 +47,10 @@ pip install -r requirements.txt
 ## Usage
 
 ### Running the Application
-
 ```bash
-# Using main.py
-python main.py --help
 
-# Or directly with the module
-python -m nudge.cli --help
+python main.py
+
 ```
 
 ### Using the Application

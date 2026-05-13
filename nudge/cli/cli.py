@@ -2,7 +2,9 @@
 
 import sys
 from datetime import datetime, date
+import time
 import questionary
+from questionary import Style
 from rich.console import Console
 from rich.table import Table
 from rich.panel import Panel
@@ -15,7 +17,6 @@ from nudge.cli.motivational import (
 )
 
 console = Console()
-
 
 def is_completed_today(habit):
     """Check if a habit has been completed today."""
@@ -36,20 +37,26 @@ def display_today_view(manager):
             console.print("[yellow]No habits found.[/yellow]\n")
             return
         
-        table = Table(title="Today's Habits", show_header=True, header_style="bold cyan")
-        table.add_column("Habit", style="green")
-        table.add_column("Periodicity", style="yellow")
-        table.add_column("Streak", style="magenta")
+        table = Table(title="Today's Habits", title_style="bold", show_header=True, header_style="bold cyan")
+        table.add_column("Habit", style="cyan")
+        table.add_column("Periodicity", style="white")
+        table.add_column("Current streak", style="white")
         table.add_column("Status", style="white")
+        table.add_column("Last completed", style="white")
         
         for habit in habits:
-            status_style = "[green]✓ Done[/green]" if is_completed_today(habit) else "[yellow]⚪ Pending[/yellow]"
+            status_style = "[green]✓ Done[/green]" if is_completed_today(habit) else "[yellow]Pending[/yellow]"
             streak = manager.calculate_streak(habit)
+            streak_type = "days" if habit.periodicity == "daily" else "weeks" if habit.periodicity in ["weekly", "weekly_fixed_day"] else "months"
+            if streak == 1:
+                streak_type = streak_type[:-1]  # Strip the s for singular form
+            last_completed = habit.completion_timestamps[-1].strftime("%Y-%m-%d") if habit.completion_timestamps else "Never"
             table.add_row(
                 habit.name,
                 habit.periodicity.value,
-                f"[bold cyan]{streak}[/bold cyan] days",
+                f"[bold cyan]{streak}[/bold cyan] {streak_type}",
                 status_style,
+                last_completed,
             )
         
         console.print(table)
@@ -61,16 +68,25 @@ def display_today_view(manager):
 
 def display_menu():
     """Display the interactive main menu."""
+
+    style = Style.from_dict({
+        'highlighted': 'bg:#0084f8 #ffffff bold',  # Blue background with white text
+        'pointer': '#0084f8 bold',  # Blue pointer
+    })
+
     choice = questionary.select(
         "Select an option:",
         choices=[
             "Create a new habit",
             "Mark habit as complete",
-            "View all habits",
             "View habit statistics",
             "Delete a habit",
             "Exit",
         ],
+        style=style,
+        use_indicator=True,
+        pointer="->",
+        instruction="Use arrow keys to navigate and Enter to select"
     ).ask()
     return choice
 
@@ -80,15 +96,16 @@ def main(manager):
     # Display welcome banner
     console.print(
         Panel(
-            "[bold cyan]NUDGE - Habit Tracker[/bold cyan]",
-            expand=False,
+            "[bold white]NUDGE[/bold white] - [italic]A Gentle Habit Tracker[/italic]",
+            expand=True,
+            title_align="center",
             border_style="cyan",
         )
     )
     
     # Display daily motivational quote
     quote = get_daily_quote()
-    console.print(f"\n[italic cyan]{quote}[/italic cyan]\n")
+    console.print(f"\n[italic white]{quote}[/italic white]\n")
 
     while True:
         # Display today's view before the menu
@@ -100,8 +117,6 @@ def main(manager):
             create_habit(manager)
         elif choice == "Mark habit as complete":
             mark_complete(manager)
-        elif choice == "View all habits":
-            view_all_habits(manager)
         elif choice == "View habit statistics":
             view_statistics(manager)
         elif choice == "Delete a habit":
@@ -122,7 +137,7 @@ def create_habit(manager):
 
     periodicity = questionary.select(
         "Periodicity:",
-        choices=["daily", "weekly", "monthly"],
+        choices=["daily", "weekly", "monthly", "weekly_fixed_day", "monthly_fixed_day"],
     ).ask()
 
     try:
@@ -130,6 +145,8 @@ def create_habit(manager):
         console.print(
             f"[green]✓ Habit '[bold]{name}[/bold]' created successfully![/green]"
         )
+        # Pause briefly to let the user see the message before going back to the main menu
+        time.sleep(3) 
     except Exception as e:
         console.print(f"[red]✗ Error creating habit: {e}[/red]")
 
@@ -160,38 +177,11 @@ def mark_complete(manager):
                 encouragement_msg = ENCOURAGEMENT_MESSAGES.get(streak, "")
                 if encouragement_msg:
                     console.print(f"\n[bold magenta]{encouragement_msg}[/bold magenta]")
+            # Pause briefly to let the user see the message before going back to the main menu
+            time.sleep(3) 
+
     except Exception as e:
         console.print(f"[red]✗ Error: {e}[/red]")
-
-
-def view_all_habits(manager):
-    """View all habits."""
-    console.print("\n[bold magenta]--- All Habits ---[/bold magenta]")
-
-    try:
-        habits = manager.storage.load_all_habits()
-        if not habits:
-            console.print("[yellow]No habits found.[/yellow]")
-            return
-
-        table = Table(title="Your Habits", show_header=True, header_style="bold cyan")
-        table.add_column("ID", style="dim")
-        table.add_column("Name", style="green")
-        table.add_column("Periodicity", style="yellow")
-        table.add_column("Completions", style="magenta")
-
-        for habit in habits:
-            table.add_row(
-                str(habit.id),
-                habit.name,
-                habit.periodicity.value,
-                str(len(habit.completion_timestamps)),
-            )
-
-        console.print(table)
-    except Exception as e:
-        console.print(f"[red]✗ Error: {e}[/red]")
-
 
 def view_statistics(manager):
     """View habit statistics."""
