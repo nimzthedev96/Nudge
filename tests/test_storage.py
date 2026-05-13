@@ -351,4 +351,28 @@ class TestStorageSeeding:
                         )
                 break
 
+    def test_habit_exists_returns_true_for_existing_habit(self, storage):
+        """Test that habit_exists returns True for an existing habit."""
+        habit = Habit("Exercise", Periodicity.DAILY)
+        storage.save_habit(habit)
+        
+        exists = storage.habit_exists("Exercise", "daily")
+        assert exists is True
 
+    def test_habit_exists_returns_false_for_nonexistent_habit(self, storage):
+        """Test that habit_exists returns False for a non-existent habit."""
+        exists = storage.habit_exists("NonExistent", "daily")
+        assert exists is False
+
+    def test_habit_exists_differentiates_by_periodicity(self, storage):
+        """Test that habit_exists checks both name and periodicity."""
+        habit = Habit("Exercise", Periodicity.DAILY)
+        storage.save_habit(habit)
+        
+        # Same name, different periodicity should not exist
+        exists_weekly = storage.habit_exists("Exercise", "weekly")
+        assert exists_weekly is False
+        
+        # Same name, same periodicity should exist
+        exists_daily = storage.habit_exists("Exercise", "daily")
+        assert exists_daily is True

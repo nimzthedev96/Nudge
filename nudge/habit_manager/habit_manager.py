@@ -16,10 +16,22 @@ class HabitManager:
         self.storage = storage
 
     def create_habit(self, name: str, periodicity: str):
-        """Create a new habit and save it to the database."""
+        """Create a new habit and save it to the database.
+        
+        Args:
+            name: The name of the habit.
+            periodicity: The periodicity of the habit (e.g., 'daily', 'weekly').
+            
+        Raises:
+            ValueError: If a habit with the same name and periodicity already exists.
+        """
         from nudge.habits.habit import Habit, Periodicity
 
-        #TODO: Add validation for name and periodicity
+        # Validate that a habit with the same name and periodicity doesn't exist
+        if self.storage.habit_exists(name, periodicity):
+            raise ValueError(
+                f"A habit named '{name}' with periodicity '{periodicity}' already exists."
+            )
 
         habit = Habit(name, Periodicity(periodicity))
         self.storage.save_habit(habit)

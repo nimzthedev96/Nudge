@@ -226,3 +226,25 @@ class TestHabitManager:
         
         streak = habit_manager.calculate_streak(habit)
         assert streak == 3
+
+    def test_create_duplicate_habit_raises_error(self, habit_manager):
+        """Test that creating a duplicate habit (same name and periodicity) raises ValueError."""
+        # Create the first habit
+        habit_manager.create_habit("Exercise", "daily")
+        
+        # Attempt to create a duplicate habit
+        with pytest.raises(ValueError, match="already exists"):
+            habit_manager.create_habit("Exercise", "daily")
+
+    def test_create_same_name_different_periodicity_allowed(self, habit_manager, storage):
+        """Test that creating a habit with same name but different periodicity is allowed."""
+        # Create a daily habit
+        habit_manager.create_habit("Exercise", "daily")
+        
+        # Create a weekly habit with the same name (should succeed)
+        habit_manager.create_habit("Exercise", "weekly")
+        
+        # Verify both habits exist
+        habits = storage.load_all_habits()
+        assert len(habits) == 2
+        assert all(h.name == "Exercise" for h in habits)

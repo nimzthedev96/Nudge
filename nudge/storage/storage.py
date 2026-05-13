@@ -186,6 +186,29 @@ class Storage:
 
         return habits
 
+    def habit_exists(self, name: str, periodicity: str) -> bool:
+        """
+        Check if a habit with the same name and periodicity already exists.
+
+        Args:
+            name: The name of the habit.
+            periodicity: The periodicity of the habit.
+
+        Returns:
+            True if a habit with the same name and periodicity exists, False otherwise.
+        """
+        conn = self._get_connection()
+        cursor = conn.cursor()
+
+        cursor.execute(
+            "SELECT id FROM habits WHERE name = ? AND periodicity = ?",
+            (name, periodicity),
+        )
+        row = cursor.fetchone()
+        conn.close()
+
+        return row is not None
+
     def save_completion(self, habit_id: int, completion_timestamp: datetime) -> None:
         """
         Save a completion timestamp for a habit.
