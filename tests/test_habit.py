@@ -2,8 +2,27 @@
 
 import pytest
 from datetime import datetime, timedelta
+import calendar
 
 from nudge.habits.habit import Habit, Periodicity
+
+
+def get_same_day_previous_month(date):
+    """Get a date with the same day but one month earlier.
+    
+    Handles month lengths properly (e.g., Jan 31 -> Dec 31, not Dec 1).
+    """
+    if date.month == 1:
+        prev_date = date.replace(year=date.year - 1, month=12)
+    else:
+        prev_date = date.replace(month=date.month - 1)
+    
+    # Handle case where day doesn't exist in previous month (e.g., Jan 31 -> Feb 28/29)
+    max_day = calendar.monthrange(prev_date.year, prev_date.month)[1]
+    if prev_date.day > max_day:
+        prev_date = prev_date.replace(day=max_day)
+    
+    return prev_date
 
 
 class TestHabit:
@@ -102,7 +121,7 @@ class TestHabit:
     def test_current_streak_single_completion_today_daily(self):
         """Test calculating streak with a single completion today."""
         habit = Habit("Exercise", Periodicity.DAILY)
-        habit.completion_timestamps = [datetime(2026, 5, 13)]
+        habit.completion_timestamps = [datetime.now()]
         streak = habit.current_streak()
         assert streak == 1
 
@@ -111,9 +130,9 @@ class TestHabit:
         habit = Habit("Journal", Periodicity.DAILY)
         
         habit.completion_timestamps = [
-            datetime(2026, 5, 13),
-            datetime(2026, 5, 12),
-            datetime(2026, 5, 11),
+            datetime.now(),
+            datetime.now() - timedelta(days=1),
+            datetime.now() - timedelta(days=2),
         ]
         
         streak = habit.current_streak()
@@ -124,8 +143,8 @@ class TestHabit:
         habit = Habit("Exercise", Periodicity.DAILY)
         
         habit.completion_timestamps = [
-            datetime(2026, 5, 13),
-            datetime(2026, 5, 11),  # Gap breaks streak
+            datetime.now(),
+            datetime.now() - timedelta(days=2),  # Gap breaks streak
         ]
         
         streak = habit.current_streak()
@@ -134,7 +153,7 @@ class TestHabit:
     def test_current_streak_single_completion_today_weekly(self):
         """Test calculating streak with a single completion this week."""
         habit = Habit("Read", Periodicity.WEEKLY)
-        habit.completion_timestamps = [datetime(2026, 5, 13)]
+        habit.completion_timestamps = [datetime.now()]
         streak = habit.current_streak()
         assert streak == 1
 
@@ -143,9 +162,9 @@ class TestHabit:
         habit = Habit("Read", Periodicity.WEEKLY)
         
         habit.completion_timestamps = [
-            datetime(2026, 5, 13),
-            datetime(2026, 5, 6),
-            datetime(2026, 4, 29),
+            datetime.now(),
+            datetime.now() - timedelta(days=7),
+            datetime.now() - timedelta(days=14),
         ]
         
         streak = habit.current_streak()
@@ -154,7 +173,7 @@ class TestHabit:
     def test_current_streak_single_completion_today_weekly_fixed_day(self):
         """Test calculating streak with a single completion on the fixed day."""
         habit = Habit("Prayer", Periodicity.WEEKLY_FIXED_DAY)
-        habit.completion_timestamps = [datetime(2026, 5, 13)]
+        habit.completion_timestamps = [datetime.now()]
         streak = habit.current_streak()
         assert streak == 1
 
@@ -163,9 +182,9 @@ class TestHabit:
         habit = Habit("Prayer", Periodicity.WEEKLY_FIXED_DAY)
         
         habit.completion_timestamps = [
-            datetime(2026, 5, 13),
-            datetime(2026, 5, 6),
-            datetime(2026, 4, 29),
+            datetime.now(),
+            datetime.now() - timedelta(days=7),
+            datetime.now() - timedelta(days=14),
         ]
         
         streak = habit.current_streak()
@@ -174,7 +193,7 @@ class TestHabit:
     def test_current_streak_single_completion_today_monthly(self):
         """Test calculating streak with a single completion this month."""
         habit = Habit("Meditate", Periodicity.MONTHLY)
-        habit.completion_timestamps = [datetime(2026, 5, 13)]
+        habit.completion_timestamps = [datetime.now()]
         streak = habit.current_streak()
         assert streak == 1
 
@@ -182,10 +201,14 @@ class TestHabit:
         """Test calculating streak over 3 consecutive months."""
         habit = Habit("Meditate", Periodicity.MONTHLY)
         
+        today = datetime.now()
+        one_month_ago = get_same_day_previous_month(today)
+        two_months_ago = get_same_day_previous_month(one_month_ago)
+        
         habit.completion_timestamps = [
-            datetime(2026, 5, 13),
-            datetime(2026, 4, 13),
-            datetime(2026, 3, 13),
+            today,
+            one_month_ago,
+            two_months_ago,
         ]
         
         streak = habit.current_streak()
@@ -194,7 +217,7 @@ class TestHabit:
     def test_current_streak_single_completion_today_monthly_fixed_day(self):
         """Test calculating streak with a single completion on the fixed day."""
         habit = Habit("Checkup", Periodicity.MONTHLY_FIXED_DAY)
-        habit.completion_timestamps = [datetime(2026, 5, 13)]
+        habit.completion_timestamps = [datetime.now()]
         streak = habit.current_streak()
         assert streak == 1
 
@@ -203,10 +226,14 @@ class TestHabit:
         habit = Habit("Checkup", Periodicity.MONTHLY_FIXED_DAY)
         
         # Completions on the same day of month in consecutive months
+        today = datetime.now()
+        one_month_ago = get_same_day_previous_month(today)
+        two_months_ago = get_same_day_previous_month(one_month_ago)
+        
         habit.completion_timestamps = [
-            datetime(2026, 5, 13),
-            datetime(2026, 4, 13),
-            datetime(2026, 3, 13),
+            today,
+            one_month_ago,
+            two_months_ago,
         ]
         
         streak = habit.current_streak()
