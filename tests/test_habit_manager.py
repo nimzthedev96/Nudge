@@ -1,15 +1,16 @@
 """Tests for HabitManager class."""
 
-import pytest
-import tempfile
 import os
-import datetime
+import tempfile
+
+import pytest
 
 from nudge.habit_manager import HabitManager
-from nudge.habits.habit import Habit, Periodicity
+from nudge.habits.habit import Periodicity
 from nudge.storage.storage import Storage
 
 # TODO: Add tests delete habit function
+
 
 class TestHabitManager:
     """Test cases for the HabitManager class."""
@@ -40,7 +41,7 @@ class TestHabitManager:
     def test_create_daily_habit(self, habit_manager, storage):
         """Test creating a daily habit."""
         habit_manager.create_habit("Exercise", "daily")
-        
+
         habits = storage.load_all_habits()
         assert len(habits) == 1
         assert habits[0].name == "Exercise"
@@ -49,7 +50,7 @@ class TestHabitManager:
     def test_create_weekly_habit(self, habit_manager, storage):
         """Test creating a weekly habit."""
         habit_manager.create_habit("Read", "weekly")
-        
+
         habits = storage.load_all_habits()
         assert len(habits) == 1
         assert habits[0].name == "Read"
@@ -58,7 +59,7 @@ class TestHabitManager:
     def test_create_weekly_fixed_day_habit(self, habit_manager, storage):
         """Test creating a weekly fixed day habit."""
         habit_manager.create_habit("Prayer", "weekly_fixed_day")
-        
+
         habits = storage.load_all_habits()
         assert len(habits) == 1
         assert habits[0].name == "Prayer"
@@ -67,7 +68,7 @@ class TestHabitManager:
     def test_create_monthly_fixed_day_habit(self, habit_manager, storage):
         """Test creating a monthly fixed day habit."""
         habit_manager.create_habit("Checkup", "monthly_fixed_day")
-        
+
         habits = storage.load_all_habits()
         assert len(habits) == 1
         assert habits[0].name == "Checkup"
@@ -78,7 +79,7 @@ class TestHabitManager:
         habit_manager.create_habit("Exercise", "daily")
         habit_manager.create_habit("Read", "weekly")
         habit_manager.create_habit("Journal", "daily")
-        
+
         habits = storage.load_all_habits()
         assert len(habits) == 3
         habit_names = {h.name for h in habits}
@@ -87,10 +88,10 @@ class TestHabitManager:
     def test_mark_habit_complete(self, habit_manager, storage):
         """Test marking a habit as complete."""
         habit_manager.create_habit("Exercise", "daily")
-        
+
         # Mark the habit as complete
         habit_manager.mark_habit_complete("Exercise")
-        
+
         # Verify it was marked
         habit = storage.load_habit_by_name("Exercise")
         assert len(habit.completion_timestamps) == 1
@@ -98,23 +99,21 @@ class TestHabitManager:
     def test_mark_habit_complete_multiple_times(self, habit_manager, storage):
         """Test marking a habit as complete multiple times."""
         habit_manager.create_habit("Exercise", "daily")
-        
+
         # Mark the habit as complete multiple times
         habit_manager.mark_habit_complete("Exercise")
         habit_manager.mark_habit_complete("Exercise")
         habit_manager.mark_habit_complete("Exercise")
-        
+
         # Verify all completions were recorded
         habit = storage.load_habit_by_name("Exercise")
         assert len(habit.completion_timestamps) == 3
-
-    
 
     def test_create_duplicate_habit_raises_error(self, habit_manager):
         """Test that creating a duplicate habit (same name and periodicity) raises ValueError."""
         # Create the first habit
         habit_manager.create_habit("Exercise", "daily")
-        
+
         # Attempt to create a duplicate habit
         with pytest.raises(ValueError, match="already exists"):
             habit_manager.create_habit("Exercise", "daily")
@@ -123,10 +122,10 @@ class TestHabitManager:
         """Test that creating a habit with same name but different periodicity is allowed."""
         # Create a daily habit
         habit_manager.create_habit("Exercise", "daily")
-        
+
         # Create a weekly habit with the same name (should succeed)
         habit_manager.create_habit("Exercise", "weekly")
-        
+
         # Verify both habits exist
         habits = storage.load_all_habits()
         assert len(habits) == 2

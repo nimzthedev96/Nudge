@@ -15,7 +15,6 @@ A gentle habit tracking application built with Python and SQLite for managing an
 
 - Python 3.11+
 - SQLite3 (included with Python)
-- pytest (for testing)
 
 ## Installation
 
@@ -38,10 +37,14 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-### 3. Install Dependencies
+### 3. Install the Package
 
 ```bash
-pip install -r requirements.txt
+# Install in development mode with dependencies
+pip install -e .
+
+# Optional: Install with development tools (testing, type checking, linting)
+pip install -e ".[dev]"
 ```
 
 ## Usage
@@ -73,6 +76,43 @@ pytest tests/test_habit.py
 # Run with verbose output
 pytest -v
 ```
+
+## Development
+
+### Code Quality Tools
+
+The project uses modern Python tools for code quality. All configurations are in `pyproject.toml`:
+
+- **mypy** - Static type checking
+- **black** - Code formatter
+- **ruff** - Fast Python linter
+
+Run these tools on your code:
+
+```bash
+# Type checking
+mypy nudge
+
+# Format code
+black nudge tests
+
+# Lint code
+ruff check nudge tests
+
+# Run all checks together
+mypy nudge && black --check nudge tests && ruff check nudge tests
+```
+
+### Project Configuration
+
+The `pyproject.toml` file contains all project metadata and tool configurations:
+- Package dependencies and optional dev dependencies
+- Build system configuration
+- Type checker settings (mypy)
+- Code formatter settings (black)
+- Linter settings (ruff)
+- Test runner settings (pytest)
+- Coverage reporting settings
 
 ## Project Structure
 

@@ -1,9 +1,10 @@
 """Tests for Storage class."""
 
-import pytest
 import os
 import tempfile
 from datetime import datetime, timedelta
+
+import pytest
 
 from nudge.habits.habit import Habit, Periodicity
 from nudge.storage.storage import Storage
@@ -31,7 +32,7 @@ class TestStorage:
 
     def test_storage_initialization_creates_database(self, temp_db):
         """Test that storage initialization creates the database."""
-        storage = Storage(temp_db)
+        _ = Storage(temp_db)
         assert os.path.exists(temp_db)
 
     def test_storage_initialization_creates_tables(self, storage, temp_db):
@@ -42,9 +43,7 @@ class TestStorage:
         cursor = conn.cursor()
 
         # Check habits table exists
-        cursor.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='habits'"
-        )
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='habits'")
         assert cursor.fetchone() is not None
 
         # Check habit_completions table exists
@@ -123,9 +122,8 @@ class TestStorage:
         loaded = storage.load_habit(habit.id)
         assert len(loaded.completion_timestamps) == 1
         # Compare without microseconds due to potential precision loss
-        assert (
-            loaded.completion_timestamps[0].replace(microsecond=0)
-            == timestamp.replace(microsecond=0)
+        assert loaded.completion_timestamps[0].replace(microsecond=0) == timestamp.replace(
+            microsecond=0
         )
 
     def test_save_multiple_completions(self, storage):
@@ -164,9 +162,7 @@ class TestStorage:
 
         # Add multiple completions
         for i in range(3):
-            storage.save_completion(
-                habit.id, datetime.now() - timedelta(days=i)
-            )
+            storage.save_completion(habit.id, datetime.now() - timedelta(days=i))
 
         # Verify completions exist
         assert storage.get_completion_count(habit.id) == 3
@@ -209,9 +205,8 @@ class TestStorage:
         assert loaded.name == "Read"
         assert loaded.periodicity == Periodicity.WEEKLY
         # Compare without microseconds
-        assert (
-            loaded.creation_timestamp.replace(microsecond=0)
-            == original_timestamp.replace(microsecond=0)
+        assert loaded.creation_timestamp.replace(microsecond=0) == original_timestamp.replace(
+            microsecond=0
         )
 
     def test_completion_timestamps_ordered(self, storage):
@@ -228,10 +223,7 @@ class TestStorage:
         loaded = storage.load_habit(habit.id)
         # Should be ordered
         for i in range(1, len(loaded.completion_timestamps)):
-            assert (
-                loaded.completion_timestamps[i]
-                >= loaded.completion_timestamps[i - 1]
-            )
+            assert loaded.completion_timestamps[i] >= loaded.completion_timestamps[i - 1]
 
     def test_multiple_habits_independent(self, storage):
         """Test that multiple habits are stored independently."""
@@ -323,15 +315,11 @@ class TestStorageSeeding:
         storage = Storage(temp_db, auto_seed=True)
         habits = storage.load_all_habits()
 
-        completion_counts = [
-            storage.get_completion_count(h.id) for h in habits
-        ]
+        completion_counts = [storage.get_completion_count(h.id) for h in habits]
 
         # Should have some variation in completion counts
         # (unless by extreme coincidence all habits have exactly same completions)
-        assert len(set(completion_counts)) > 1 or all(
-            c > 0 for c in completion_counts
-        )
+        assert len(set(completion_counts)) > 1 or all(c > 0 for c in completion_counts)
 
     def test_seeded_completion_timestamps_ordered(self, temp_db):
         """Test that seeded completions are ordered chronologically."""
@@ -346,8 +334,7 @@ class TestStorageSeeding:
                     # Verify ordering
                     for i in range(1, len(loaded.completion_timestamps)):
                         assert (
-                            loaded.completion_timestamps[i]
-                            >= loaded.completion_timestamps[i - 1]
+                            loaded.completion_timestamps[i] >= loaded.completion_timestamps[i - 1]
                         )
                 break
 
@@ -355,7 +342,7 @@ class TestStorageSeeding:
         """Test that habit_exists returns True for an existing habit."""
         habit = Habit("Exercise", Periodicity.DAILY)
         storage.save_habit(habit)
-        
+
         exists = storage.habit_exists("Exercise", "daily")
         assert exists is True
 
@@ -368,11 +355,11 @@ class TestStorageSeeding:
         """Test that habit_exists checks both name and periodicity."""
         habit = Habit("Exercise", Periodicity.DAILY)
         storage.save_habit(habit)
-        
+
         # Same name, different periodicity should not exist
         exists_weekly = storage.habit_exists("Exercise", "weekly")
         assert exists_weekly is False
-        
+
         # Same name, same periodicity should exist
         exists_daily = storage.habit_exists("Exercise", "daily")
         assert exists_daily is True

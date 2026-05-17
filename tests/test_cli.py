@@ -1,14 +1,15 @@
 """Tests for CLI module."""
 
-import pytest
-import tempfile
 import os
-from datetime import datetime, date
+import tempfile
+from datetime import datetime
+
+import pytest
 
 from nudge.cli.cli import is_completed_today, select_habit
+from nudge.habit_manager.habit_manager import HabitManager
 from nudge.habits.habit import Habit, Periodicity
 from nudge.storage.storage import Storage
-from nudge.habit_manager.habit_manager import HabitManager
 
 
 class TestCLI:
@@ -65,4 +66,3 @@ class TestCLI:
     # TODO: Add tests for create_habit function
     # TODO: Add tests for mark_complete function
     # TODO: Add tests for delete_habit function
-

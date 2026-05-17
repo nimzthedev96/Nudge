@@ -1,11 +1,14 @@
 """Tests for Analytics module."""
 
 from datetime import datetime, timedelta
-from nudge.habits.habit import Habit, Periodicity
+
 from nudge.analytics import analytics
+from nudge.habits.habit import Habit, Periodicity
+
 
 class TestAnalytics:
     """Test cases for analytics functions."""
+
     def test_get_habits_by_periodicity(self):
         """Test filtering habits by periodicity."""
         habit1 = Habit("Exercise", Periodicity.DAILY)
@@ -36,18 +39,17 @@ class TestAnalytics:
         habit2 = Habit("Read", Periodicity.WEEKLY)
         habit3 = Habit("Review goals", Periodicity.MONTHLY)
         habit1.completion_timestamps.append("2024-01-01T10:00:00")
-        habits = [habit1, habit2, habit3] 
+        habits = [habit1, habit2, habit3]
         tracked_habits = analytics.get_all_tracked_habits(habits)
-        assert len(tracked_habits) == 1 
+        assert len(tracked_habits) == 1
         assert tracked_habits[0].name == "Exercise"
-        assert tracked_habits[0].periodicity == Periodicity.DAILY 
-      
-    
+        assert tracked_habits[0].periodicity == Periodicity.DAILY
+
     def test_get_longest_streak_for_all(self):
         """Test calculating the longest streak across all habits."""
         habit1 = Habit("Exercise", Periodicity.DAILY)
         habit2 = Habit("Read", Periodicity.WEEKLY)
-        
+
         # Add completions to habit1 (3-day streak)
         base_date = datetime(2024, 1, 1, 10, 0, 0)
         habit1.completion_timestamps = [
@@ -55,13 +57,13 @@ class TestAnalytics:
             base_date + timedelta(days=1),
             base_date + timedelta(days=2),
         ]
-        
+
         # Add completions to habit2 (2-week streak)
         habit2.completion_timestamps = [
             base_date,
             base_date + timedelta(days=5),
         ]
-        
+
         habits = [habit1, habit2]
         longest = analytics.get_longest_streak_for_all(habits)
         assert longest == 3  # habit1's streak is longer
@@ -264,6 +266,3 @@ class TestAnalytics:
         ]
         streak = analytics.get_longest_streak(habit)
         assert streak == 5
-    
-
-    

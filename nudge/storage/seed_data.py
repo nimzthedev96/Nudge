@@ -1,7 +1,8 @@
 """Database seeding module for initializing sample habit data."""
 
-from datetime import datetime, timedelta
 from calendar import monthrange
+from datetime import datetime, timedelta
+
 from nudge.habits.habit import Habit, Periodicity
 from nudge.storage.storage import Storage
 
@@ -19,7 +20,7 @@ def seed_initial_habits(storage: Storage) -> None:
     # Check if database already has habits
     existing_habits = storage.load_all_habits()
     if existing_habits:
-       return
+        return
 
     # Define sample habits with different periodicities
     sample_habits = [
@@ -54,12 +55,11 @@ def seed_initial_habits(storage: Storage) -> None:
 
         # Save each completion
         for completion_date in completions:
-            storage.save_completion(habit.id, completion_date)
+            if habit.id is not None:
+                storage.save_completion(habit.id, completion_date)
 
 
-def _generate_daily_pattern(
-    days_back: int, adherence_rate: float
-) -> list[datetime]:
+def _generate_daily_pattern(days_back: int, adherence_rate: float) -> list[datetime]:
     """
     Generate a realistic daily habit completion pattern.
 
@@ -76,9 +76,7 @@ def _generate_daily_pattern(
     for day in range(days_back):
         if _should_complete(adherence_rate):
             # Vary the time slightly to be realistic
-            completion_time = now - timedelta(
-                days=day, minutes=_random_offset(60)
-            )
+            completion_time = now - timedelta(days=day, minutes=_random_offset(60))
             completions.append(completion_time)
 
     return sorted(completions)
@@ -110,9 +108,7 @@ def _generate_weekly_pattern(weeks_back: int, adherence_rate: float) -> list[dat
     return sorted(completions)
 
 
-def _generate_monthly_pattern(
-    months_back: int, adherence_rate: float
-) -> list[datetime]:
+def _generate_monthly_pattern(months_back: int, adherence_rate: float) -> list[datetime]:
     """
     Generate a realistic monthly habit completion pattern.
 
@@ -141,9 +137,7 @@ def _generate_monthly_pattern(
     return sorted(completions)
 
 
-def _generate_weekly_fixed_day_pattern(
-    weeks_back: int, adherence_rate: float
-) -> list[datetime]:
+def _generate_weekly_fixed_day_pattern(weeks_back: int, adherence_rate: float) -> list[datetime]:
     """
     Generate a realistic weekly habit completion pattern for fixed weekday habits.
 
@@ -157,11 +151,8 @@ def _generate_weekly_fixed_day_pattern(
     completions = []
     now = datetime.now().replace(hour=7, minute=0, second=0, microsecond=0)
 
-    # Determine a fixed weekday (e.g., Wednesday)
-    # Make sure we start from a specific day of the week
-    days_since_start = now.weekday()  # 0=Monday, ..., 6=Sunday
     fixed_weekday_offset = 2  # Wednesday
-    
+
     for week in range(weeks_back):
         if _should_complete(adherence_rate):
             # Calculate days to the fixed weekday
@@ -174,9 +165,7 @@ def _generate_weekly_fixed_day_pattern(
     return sorted(completions)
 
 
-def _generate_monthly_fixed_day_pattern(
-    months_back: int, adherence_rate: float
-) -> list[datetime]:
+def _generate_monthly_fixed_day_pattern(months_back: int, adherence_rate: float) -> list[datetime]:
     """
     Generate a realistic monthly habit completion pattern for fixed day-of-month habits.
 
@@ -189,7 +178,7 @@ def _generate_monthly_fixed_day_pattern(
     """
     completions = []
     now = datetime.now().replace(hour=15, minute=0, second=0, microsecond=0)
-    
+
     # Use the current day of the month as the fixed day
     fixed_day = now.day
 
@@ -201,7 +190,7 @@ def _generate_monthly_fixed_day_pattern(
                     month=((now.month - month - 1) % 12) + 1,
                     year=now.year - (1 if (now.month - month - 1) < 0 else 0),
                     day=fixed_day,
-                    minute=_random_offset(60)
+                    minute=_random_offset(60),
                 )
                 completions.append(completion_date)
             except ValueError:
@@ -212,10 +201,7 @@ def _generate_monthly_fixed_day_pattern(
                 last_day = monthrange(year, month_num)[1]
                 day_to_use = min(fixed_day, last_day)
                 completion_date = now.replace(
-                    month=month_num,
-                    year=year,
-                    day=day_to_use,
-                    minute=_random_offset(60)
+                    month=month_num, year=year, day=day_to_use, minute=_random_offset(60)
                 )
                 completions.append(completion_date)
 

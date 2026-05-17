@@ -1,7 +1,6 @@
 """Motivational messages and streak tracking utilities."""
 
 import random
-from datetime import datetime, date, timedelta
 
 DAILY_QUOTES = [
     "Every small step counts. You're building a better version of yourself! 🌱",
@@ -48,12 +47,11 @@ PENDING_REMINDERS = [
 ]
 
 
-def get_daily_quote():
+def get_daily_quote() -> str:
     """Get a random daily motivational quote."""
     return random.choice(DAILY_QUOTES)
 
 
-def get_completion_message():
+def get_completion_message() -> str:
     """Get a random completion encouragement message."""
     return random.choice(COMPLETION_MESSAGES)
-
