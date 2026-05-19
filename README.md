@@ -11,6 +11,17 @@ A gentle habit tracking application built with Python and SQLite for managing an
 - Easy to use interface
 - Convenient summary view
 
+## Habit Periodicities
+
+Nudge supports five different periodicity types for habits:
+
+- **Daily** - Must be completed every day. Streaks continue when completions are within 1 day of each other.
+- **Weekly** - Must be completed once per week. Streaks continue when completions are within 14 days of each other.
+- **Weekly Fixed Day** - Must be completed on the same day of the week (e.g., every Monday). Streaks require completions on the same weekday in consecutive weeks.
+- **Monthly** - Must be completed once per month. Streaks continue when completions occur in consecutive months.
+- **Monthly Fixed Day** - Must be completed on the same day of each month (e.g., the 15th). Streaks require completions on the same day in consecutive months.
+
+
 ## Requirements
 
 - Python 3.11+
