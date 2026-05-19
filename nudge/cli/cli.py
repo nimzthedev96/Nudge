@@ -15,6 +15,13 @@ if TYPE_CHECKING:
     from nudge.habit_manager.habit_manager import HabitManager
     from nudge.habits.habit import Habit
 
+from nudge.analytics.analytics import (
+    get_all_tracked_habits,
+    get_best_performing_habit,
+    get_habits_by_periodicity,
+    get_longest_streak,
+    get_longest_streak_for_all,
+)
 from nudge.cli.motivational import (
     ENCOURAGEMENT_MESSAGES,
     get_completion_message,
@@ -34,7 +41,7 @@ def is_completed_today(habit: "Habit") -> bool:
     return latest_completion.date() == today
 
 
-def display_today_view(manager: "HabitManager") -> None:
+def display_today_view(manager: HabitManager) -> None:
     """Display today's habit view with streaks and progress."""
     try:
         habits = manager.storage.load_all_habits()
@@ -98,7 +105,7 @@ def display_menu() -> Optional[str]:
         choices=[
             "Create a new habit",
             "Mark habit as complete",
-            "View habit statistics",
+            "View analytics",
             "Delete a habit",
             "Exit",
         ],
@@ -110,7 +117,7 @@ def display_menu() -> Optional[str]:
     return choice  # type: ignore
 
 
-def main(manager: "HabitManager") -> None:
+def main(manager: HabitManager) -> None:
     """Main CLI entry point."""
     # Display welcome banner
     console.print(
@@ -136,7 +143,7 @@ def main(manager: "HabitManager") -> None:
             create_habit(manager)
         elif choice == "Mark habit as complete":
             mark_complete(manager)
-        elif choice == "View habit analytics":
+        elif choice == "View analytics":
             view_analytics(manager)
         elif choice == "Delete a habit":
             delete_habit(manager)
@@ -197,7 +204,7 @@ def select_habit(
     return selected  # type: ignore
 
 
-def create_habit(manager: "HabitManager") -> None:
+def create_habit(manager: HabitManager) -> None:
     """Create a new habit through interactive CLI prompts.
 
     Prompts the user for habit name and periodicity, then creates the habit
@@ -227,7 +234,7 @@ def create_habit(manager: "HabitManager") -> None:
         console.print(f"[red]✗ Error creating habit: {e}[/red]")
 
 
-def mark_complete(manager: "HabitManager") -> None:
+def mark_complete(manager: HabitManager) -> None:
     """Mark a selected habit as complete and display streak achievements.
 
     Allows user to select a habit from interactive menu, marks it complete,
@@ -266,20 +273,152 @@ def mark_complete(manager: "HabitManager") -> None:
         console.print(f"[red]✗ Error: {e}[/red]")
 
 
-def view_analytics(manager: "HabitManager") -> None:
+def view_analytics(manager: HabitManager) -> None:
     """View habit analytics and statistics.
 
-    Displays analytics including habit streaks, completion rates,
-    and performance metrics
+    Displays an analytics sub-menu with options for different views:
+    - Summary Dashboard
+    - View Habits by Periodicity
+    - Detailed Habit Analysis
 
     Args:
         manager: The HabitManager instance for retrieving habit data.
     """
-    console.print("\n[bold cyan]--- Habit Analytics ---[/bold cyan]")
-    console.print("[yellow]TODO: Implement analytics view[/yellow]")
+    style = Style.from_dict(
+        {
+            "highlighted": "bg:#0084f8 #ffffff bold",  # Blue background with white text
+            "pointer": "#0084f8 bold",  # Blue pointer
+        }
+    )
+
+    while True:
+        choice = questionary.select(
+            "[bold cyan]Analytics Menu[/bold cyan]",
+            choices=[
+                "Summary Dashboard",
+                "Detailed Habit Analysis",
+                "« Back to menu",
+            ],
+            style=style,
+            use_indicator=True,
+            pointer="->",
+        ).ask()
+
+        if choice == "« Back to menu":
+            return
+        elif choice == "Summary Dashboard":
+            display_summary_dashboard(manager)
+        elif choice == "Detailed Habit Analysis":
+            view_detailed_habit_analysis(manager)
 
 
-def delete_habit(manager: "HabitManager") -> None:
+def display_summary_dashboard(manager: HabitManager) -> None:
+    """Display an overview dashboard with global statistics and habit summary table.
+
+    Args:
+        manager: The HabitManager instance for retrieving habit data.
+    """
+    try:
+        habits = manager.storage.load_all_habits()
+
+        if not habits:
+            console.print("[yellow]No habits found.[/yellow]\n")
+            return
+
+        tracked_habits = get_all_tracked_habits(habits)
+        longest_streak_all = get_longest_streak_for_all(habits)
+     
+        # Create and display habits table
+        table = Table(title="All Habits Summary", title_style="bold", show_header=True, header_style="bold cyan")
+        table.add_column("Habit", style="cyan")
+        table.add_column("Periodicity", style="white")
+        table.add_column("Current Streak", style="white")
+        table.add_column("Longest Streak", style="white")
+        table.add_column("Total Completions", style="white")
+
+        for habit in habits:
+            current_streak = habit.current_streak()
+            longest_streak = get_longest_streak(habit)
+            total_completions = len(habit.completion_timestamps)
+
+            table.add_row(
+                habit.name,
+                habit.periodicity.value,
+                f"[bold cyan]{current_streak}[/bold cyan]",
+                f"[bold cyan]{longest_streak}[/bold cyan]",
+                str(total_completions),
+            )
+
+        console.print(table)
+        console.print()  # Add spacing
+
+        console.print(f"[cyan]Total Habits:[/cyan] [bold]{len(habits)}[/bold]")
+        console.print(f"[cyan]Tracked Habits:[/cyan] [bold]{len(tracked_habits)}[/bold]")
+       
+        # Find and display best performing habit
+        best_habit = get_best_performing_habit(habits)
+        if best_habit:
+            best_streak = get_longest_streak(best_habit)
+            console.print(f"[bold white]🏆 Best Performing Habit:[/bold white] [white]{best_habit.name} with a longest streak of {best_streak}[/white]")
+
+        # Display random motivational quote
+        console.print()  # Add spacing
+        quote = get_daily_quote()
+        console.print(f"[italic cyan]{quote}[/italic cyan]")
+
+    except Exception as e:
+        console.print(f"[red]✗ Error loading summary dashboard: {e}[/red]\n")
+    
+    # Back to analytics menu
+    console.input("\n[cyan]Press Enter to return to analytics menu...[/cyan]")
+
+
+def view_detailed_habit_analysis(manager: HabitManager) -> None:
+    """Display detailed analytics for a selected habit.
+
+    Allows user to select a habit and view detailed information including
+    streaks, completion history, and creation date.
+
+    Args:
+        manager: The HabitManager instance for retrieving habit data.
+    """
+    habit_name = select_habit(manager, "Select a habit to analyze:", color="blue")
+    if not habit_name:
+        return
+
+    try:
+        habit = manager.storage.load_habit_by_name(habit_name)
+        if not habit:
+            console.print(f"[red]✗ Habit '{habit_name}' not found[/red]\n")
+            return
+
+        current_streak = habit.current_streak()
+        longest_streak = get_longest_streak(habit)
+        total_completions = len(habit.completion_timestamps)
+
+        console.print(f"\n[bold white]Habit Analysis: {habit_name}[/bold white]")
+        console.print(f"[cyan]Periodicity:[/cyan] [bold]{habit.periodicity.value}[/bold]")
+        console.print(f"[cyan]Created:[/cyan] [bold]{habit.creation_timestamp.strftime('%Y-%m-%d')}[/bold]")
+        console.print(f"[cyan]Current Streak:[/cyan] [bold cyan]{current_streak}[/bold cyan]")
+        console.print(f"[cyan]Longest Streak:[/cyan] [bold cyan]{longest_streak}[/bold cyan]")
+        console.print(f"[cyan]Total Completions:[/cyan] [bold]{total_completions}[/bold]")
+
+        if habit.completion_timestamps:
+            first_completion = min(habit.completion_timestamps).strftime("%Y-%m-%d")
+            last_completion = max(habit.completion_timestamps).strftime("%Y-%m-%d")
+            console.print(f"[cyan]First Completion:[/cyan] [bold]{first_completion}[/bold]")
+            console.print(f"[cyan]Last Completion:[/cyan] [bold]{last_completion}[/bold]")
+
+        console.print()  # Add spacing
+
+    except Exception as e:
+        console.print(f"[red]✗ Error loading habit analysis: {e}[/red]\n")
+    
+    # Back to analytics menu
+    console.input("\n[cyan]Press Enter to return to analytics menu...[/cyan]")
+
+
+def delete_habit(manager: HabitManager) -> None:
     """Delete a selected habit after user confirmation.
 
     Allows user to select a habit to delete and requires confirmation

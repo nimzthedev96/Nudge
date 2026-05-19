@@ -35,6 +35,24 @@ def get_longest_streak_for_all(habits: List[Habit]) -> int:
     return longest_streak
 
 
+def get_best_performing_habit(habits: List[Habit]) -> "Habit | None":
+    """Return the habit with the longest streak (using total completions as a tiebreaker).
+
+    Args:
+        habits: A list of Habit objects to evaluate.
+
+    Returns:
+        The Habit object with the best performance, or None if habits list is empty.
+    """
+    if not habits:
+        return None
+    
+    return max(
+        habits,
+        key=lambda h: (get_longest_streak(h), len(h.completion_timestamps))
+    )
+
+
 def get_longest_streak(habit: Habit) -> int:
     """Calculate the longest run streak for a given habit based on periodicity.
 
