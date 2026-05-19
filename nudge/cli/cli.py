@@ -198,7 +198,14 @@ def select_habit(
 
 
 def create_habit(manager: "HabitManager") -> None:
-    """Create a new habit."""
+    """Create a new habit through interactive CLI prompts.
+
+    Prompts the user for habit name and periodicity, then creates the habit
+    in the database. Displays success or error messages to the user.
+
+    Args:
+        manager: The HabitManager instance for habit operations.
+    """
     console.print("\n[bold green]--- Create Habit ---[/bold green]")
 
     name = questionary.text("Habit name:").ask()
@@ -221,7 +228,14 @@ def create_habit(manager: "HabitManager") -> None:
 
 
 def mark_complete(manager: "HabitManager") -> None:
-    """Mark a habit as complete."""
+    """Mark a selected habit as complete and display streak achievements.
+
+    Allows user to select a habit from interactive menu, marks it complete,
+    and displays motivational messages including streak milestones.
+
+    Args:
+        manager: The HabitManager instance for habit operations.
+    """
     console.print("\n[bold blue]--- Mark Habit Complete ---[/bold blue]")
 
     name = select_habit(manager, "Select a habit to mark complete:", color="blue")
@@ -253,13 +267,27 @@ def mark_complete(manager: "HabitManager") -> None:
 
 
 def view_analytics(manager: "HabitManager") -> None:
-    """View habit analytics."""
+    """View habit analytics and statistics.
+
+    Displays analytics including habit streaks, completion rates,
+    and performance metrics
+
+    Args:
+        manager: The HabitManager instance for retrieving habit data.
+    """
     console.print("\n[bold cyan]--- Habit Analytics ---[/bold cyan]")
     console.print("[yellow]TODO: Implement analytics view[/yellow]")
 
 
 def delete_habit(manager: "HabitManager") -> None:
-    """Delete a habit with confirmation."""
+    """Delete a selected habit after user confirmation.
+
+    Allows user to select a habit to delete and requires confirmation
+    before permanently removing it from the database.
+
+    Args:
+        manager: The HabitManager instance for habit operations.
+    """
     console.print("\n[bold red]--- Delete Habit ---[/bold red]")
 
     name = select_habit(manager, "Select a habit to delete:", color="red")

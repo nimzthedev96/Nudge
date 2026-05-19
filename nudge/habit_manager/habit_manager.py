@@ -41,7 +41,14 @@ class HabitManager:
         self.storage.save_habit(habit)
 
     def mark_habit_complete(self, name: str) -> None:
-        """Record a completion of a habit and save it to the database."""
+        """Record a completion of a habit and save it to the database.
+
+        Args:
+            name: The name of the habit to mark as complete.
+
+        Raises:
+            ValueError: If habit with the given name does not exist.
+        """
 
         habit = self.storage.load_habit_by_name(name)
         if not habit:

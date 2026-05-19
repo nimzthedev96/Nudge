@@ -86,8 +86,7 @@ The project uses modern Python tools for code quality. All configurations are in
 - **mypy** - Static type checking
 - **black** - Code formatter
 - **ruff** - Fast Python linter
-
-Run these tools on your code:
+Run code quality checks:
 
 ```bash
 # Type checking
@@ -98,38 +97,19 @@ black nudge tests
 
 # Lint code
 ruff check nudge tests
-
-# Run all checks together
-mypy nudge && black --check nudge tests && ruff check nudge tests
 ```
-
-### Project Configuration
-
-The `pyproject.toml` file contains all project metadata and tool configurations:
-- Package dependencies and optional dev dependencies
-- Build system configuration
-- Type checker settings (mypy)
-- Code formatter settings (black)
-- Linter settings (ruff)
-- Test runner settings (pytest)
-- Coverage reporting settings
 
 ## Project Structure
 
 ```
 nudge/
-├── analytics/           # Functional analytics and statistics
+├── analytics/           # Analytics and statistics
 ├── cli/                 # Command-line interface
-├── habits/              # Core habit class (Habit)
-├── habit_manager/       # Service class for managing habits (HabitManager)
-├── storage/             # Service class for database operations (Storage)
-tests/                   # Unit tests (pytest)
+├── habits/              # Habit model
+├── habit_manager/       # Habit management service
+├── storage/             # Database operations
+tests/                   # Unit tests
 ```
-
-## Project Components
-- HabitManager: Service class acts as an API to the CLI
-- CLI: Service class for CLI interactions and UI
-- Storage: Service class for database operations
 
 ## Database Schema
 

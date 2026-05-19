@@ -9,19 +9,6 @@ description = "A gentle habit tracking application built with Python and SQLite"
 readme = "README.md"
 requires-python = ">=3.11"
 license = {text = "MIT"}
-authors = [
-    {name = "Your Name", email = "your.email@example.com"}
-]
-keywords = ["habits", "tracking", "productivity", "habits-tracker"]
-classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: End Users/Desktop",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Office/Business",
-]
 
 dependencies = [
     "questionary>=2.0.1",
@@ -36,11 +23,6 @@ dev = [
     "ruff>=0.1.0",
     "black>=23.0.0",
 ]
-
-[project.urls]
-Homepage = "https://github.com/nimzthedev96/Nudge"
-Repository = "https://github.com/nimzthedev96/Nudge.git"
-Issues = "https://github.com/nimzthedev96/Nudge/issues"
 
 [project.scripts]
 nudge = "nudge.cli.cli:main"

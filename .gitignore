@@ -47,6 +47,10 @@ htmlcov/
 .tox/
 .hypothesis/
 
+# Type checking & linting
+.mypy_cache/
+.ruff_cache/
+
 # OS
 .DS_Store
 Thumbs.db
