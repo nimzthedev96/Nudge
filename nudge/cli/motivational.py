@@ -1,4 +1,4 @@
-"""Motivational messages and streak tracking utilities."""
+"""Motivational messages returned randomly to encourage the user."""
 
 import random
 
