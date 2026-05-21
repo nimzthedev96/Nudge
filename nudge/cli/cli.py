@@ -27,6 +27,7 @@ from nudge.cli.motivational import (
     get_completion_message,
     get_daily_quote,
 )
+from nudge.cli import graphs
 
 console = Console()
 
@@ -66,8 +67,8 @@ def display_today_view(manager: HabitManager) -> None:
             streak = habit.current_streak()
             streak_type = (
                 "days"
-                if habit.periodicity == "daily"
-                else "weeks" if habit.periodicity in ["weekly", "weekly_fixed_day"] else "months"
+                if habit.periodicity == "Daily"
+                else "weeks" if habit.periodicity in ["Weekly", "Weekly (Fixed Day)"] else "months"
             )
             if streak == 1:
                 streak_type = streak_type[:-1]  # Strip the s for singular form
@@ -222,7 +223,7 @@ def create_habit(manager: HabitManager) -> None:
 
     periodicity = questionary.select(
         "Periodicity:",
-        choices=["daily", "weekly", "monthly", "weekly_fixed_day", "monthly_fixed_day"],
+        choices=["Daily", "Weekly", "Monthly", "Weekly (Fixed Day)", "Monthly (Fixed Day)"],
     ).ask()
 
     try:
@@ -278,8 +279,8 @@ def view_analytics(manager: HabitManager) -> None:
 
     Displays an analytics sub-menu with options for different views:
     - Summary Dashboard
-    - View Habits by Periodicity
     - Detailed Habit Analysis
+    - View Graphs
 
     Args:
         manager: The HabitManager instance for retrieving habit data.
@@ -297,6 +298,7 @@ def view_analytics(manager: HabitManager) -> None:
             choices=[
                 "Summary Dashboard",
                 "Detailed Habit Analysis",
+                "View Graphs",
                 "« Back to menu",
             ],
             style=style,
@@ -310,6 +312,8 @@ def view_analytics(manager: HabitManager) -> None:
             display_summary_dashboard(manager)
         elif choice == "Detailed Habit Analysis":
             view_detailed_habit_analysis(manager)
+        elif choice == "View Graphs":
+            view_graphs(manager)
 
 
 def display_summary_dashboard(manager: HabitManager) -> None:
@@ -399,8 +403,8 @@ def view_detailed_habit_analysis(manager: HabitManager) -> None:
         console.print(f"\n[bold white]Habit Analysis: {habit_name}[/bold white]")
         console.print(f"[cyan]Periodicity:[/cyan] [bold]{habit.periodicity.value}[/bold]")
         console.print(f"[cyan]Created:[/cyan] [bold]{habit.creation_timestamp.strftime('%Y-%m-%d')}[/bold]")
-        console.print(f"[cyan]Current Streak:[/cyan] [bold cyan]{current_streak}[/bold cyan]")
-        console.print(f"[cyan]Longest Streak:[/cyan] [bold cyan]{longest_streak}[/bold cyan]")
+        console.print(f"[cyan]Current Streak:[/cyan] [bold]{current_streak}[/bold]")
+        console.print(f"[cyan]Longest Streak:[/cyan] [bold]{longest_streak}[/bold]")
         console.print(f"[cyan]Total Completions:[/cyan] [bold]{total_completions}[/bold]")
 
         if habit.completion_timestamps:
@@ -416,6 +420,47 @@ def view_detailed_habit_analysis(manager: HabitManager) -> None:
     
     # Back to analytics menu
     console.input("\n[cyan]Press Enter to return to analytics menu...[/cyan]")
+
+
+def view_graphs(manager: HabitManager) -> None:
+    """Display graph visualization options for habit analytics.
+
+    Allows user to select different graph types to visualize habit data
+    including streak comparisons, completion totals, timelines, and
+    periodicity distribution.
+
+    Args:
+        manager: The HabitManager instance for retrieving habit data.
+    """
+    style = Style.from_dict(
+        {
+            "highlighted": "bg:#0084f8 #ffffff bold",  # Blue background with white text
+            "pointer": "#0084f8 bold",  # Blue pointer
+        }
+    )
+
+    while True:
+        choice = questionary.select(
+            "[bold cyan]Graphs Menu[/bold cyan]",
+            choices=[
+                "Streak Comparison",
+                "Total Completions",
+                "Periodicity Distribution",
+                "« Back to analytics",
+            ],
+            style=style,
+            use_indicator=True,
+            pointer="->",
+        ).ask()
+
+        if choice == "« Back to analytics":
+            return
+        elif choice == "Streak Comparison":
+            graphs.render_streak_comparison(manager)
+        elif choice == "Total Completions":
+            graphs.render_total_completions(manager)
+        elif choice == "Periodicity Distribution":
+            graphs.render_periodicity_distribution(manager)
 
 
 def delete_habit(manager: HabitManager) -> None:

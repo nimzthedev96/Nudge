@@ -6,13 +6,13 @@ from typing import List, Optional
 
 
 class Periodicity(StrEnum):
-    """Enum for habit periodicity. Valid values are 'daily', 'weekly', 'monthly', 'weekly_fixed_day' and 'monthly_fixed_day'."""
+    """Enum for habit periodicity. Valid values are 'Daily', 'Weekly', 'Monthly', 'Weekly (Fixed Day)' and 'Monthly (Fixed Day)'."""
 
-    DAILY = "daily"
-    WEEKLY = "weekly"
-    MONTHLY = "monthly"
-    WEEKLY_FIXED_DAY = "weekly_fixed_day"
-    MONTHLY_FIXED_DAY = "monthly_fixed_day"
+    DAILY = "Daily"
+    WEEKLY = "Weekly"
+    MONTHLY = "Monthly"
+    WEEKLY_FIXED_DAY = "Weekly (Fixed Day)"
+    MONTHLY_FIXED_DAY = "Monthly (Fixed Day)"
 
 
 class Habit:

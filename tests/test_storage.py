@@ -343,12 +343,12 @@ class TestStorageSeeding:
         habit = Habit("Exercise", Periodicity.DAILY)
         storage.save_habit(habit)
 
-        exists = storage.habit_exists("Exercise", "daily")
+        exists = storage.habit_exists("Exercise", "Daily")
         assert exists is True
 
     def test_habit_exists_returns_false_for_nonexistent_habit(self, storage):
         """Test that habit_exists returns False for a non-existent habit."""
-        exists = storage.habit_exists("NonExistent", "daily")
+        exists = storage.habit_exists("NonExistent", "Daily")
         assert exists is False
 
     def test_habit_exists_differentiates_by_periodicity(self, storage):
@@ -357,9 +357,9 @@ class TestStorageSeeding:
         storage.save_habit(habit)
 
         # Same name, different periodicity should not exist
-        exists_weekly = storage.habit_exists("Exercise", "weekly")
+        exists_weekly = storage.habit_exists("Exercise", "Weekly")
         assert exists_weekly is False
 
         # Same name, same periodicity should exist
-        exists_daily = storage.habit_exists("Exercise", "daily")
+        exists_daily = storage.habit_exists("Exercise", "Daily")
         assert exists_daily is True

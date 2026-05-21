@@ -40,7 +40,7 @@ class TestHabitManager:
     # Test cases for HabitManager methods
     def test_create_daily_habit(self, habit_manager, storage):
         """Test creating a daily habit."""
-        habit_manager.create_habit("Exercise", "daily")
+        habit_manager.create_habit("Exercise", "Daily")
 
         habits = storage.load_all_habits()
         assert len(habits) == 1
@@ -49,7 +49,7 @@ class TestHabitManager:
 
     def test_create_weekly_habit(self, habit_manager, storage):
         """Test creating a weekly habit."""
-        habit_manager.create_habit("Read", "weekly")
+        habit_manager.create_habit("Read", "Weekly")
 
         habits = storage.load_all_habits()
         assert len(habits) == 1
@@ -58,7 +58,7 @@ class TestHabitManager:
 
     def test_create_weekly_fixed_day_habit(self, habit_manager, storage):
         """Test creating a weekly fixed day habit."""
-        habit_manager.create_habit("Prayer", "weekly_fixed_day")
+        habit_manager.create_habit("Prayer", "Weekly (Fixed Day)")
 
         habits = storage.load_all_habits()
         assert len(habits) == 1
@@ -67,7 +67,7 @@ class TestHabitManager:
 
     def test_create_monthly_fixed_day_habit(self, habit_manager, storage):
         """Test creating a monthly fixed day habit."""
-        habit_manager.create_habit("Checkup", "monthly_fixed_day")
+        habit_manager.create_habit("Checkup", "Monthly (Fixed Day)")
 
         habits = storage.load_all_habits()
         assert len(habits) == 1
@@ -76,9 +76,9 @@ class TestHabitManager:
 
     def test_create_multiple_habits(self, habit_manager, storage):
         """Test creating multiple habits."""
-        habit_manager.create_habit("Exercise", "daily")
-        habit_manager.create_habit("Read", "weekly")
-        habit_manager.create_habit("Journal", "daily")
+        habit_manager.create_habit("Exercise", "Daily")
+        habit_manager.create_habit("Read", "Weekly")
+        habit_manager.create_habit("Journal", "Daily")
 
         habits = storage.load_all_habits()
         assert len(habits) == 3
@@ -87,7 +87,7 @@ class TestHabitManager:
 
     def test_mark_habit_complete(self, habit_manager, storage):
         """Test marking a habit as complete."""
-        habit_manager.create_habit("Exercise", "daily")
+        habit_manager.create_habit("Exercise", "Daily")
 
         # Mark the habit as complete
         habit_manager.mark_habit_complete("Exercise")
@@ -98,7 +98,7 @@ class TestHabitManager:
 
     def test_mark_habit_complete_multiple_times(self, habit_manager, storage):
         """Test marking a habit as complete multiple times."""
-        habit_manager.create_habit("Exercise", "daily")
+        habit_manager.create_habit("Exercise", "Daily")
 
         # Mark the habit as complete multiple times
         habit_manager.mark_habit_complete("Exercise")
@@ -112,19 +112,19 @@ class TestHabitManager:
     def test_create_duplicate_habit_raises_error(self, habit_manager):
         """Test that creating a duplicate habit (same name and periodicity) raises ValueError."""
         # Create the first habit
-        habit_manager.create_habit("Exercise", "daily")
+        habit_manager.create_habit("Exercise", "Daily")
 
         # Attempt to create a duplicate habit
         with pytest.raises(ValueError, match="already exists"):
-            habit_manager.create_habit("Exercise", "daily")
+            habit_manager.create_habit("Exercise", "Daily")
 
     def test_create_same_name_different_periodicity_allowed(self, habit_manager, storage):
         """Test that creating a habit with same name but different periodicity is allowed."""
         # Create a daily habit
-        habit_manager.create_habit("Exercise", "daily")
+        habit_manager.create_habit("Exercise", "Daily")
 
         # Create a weekly habit with the same name (should succeed)
-        habit_manager.create_habit("Exercise", "weekly")
+        habit_manager.create_habit("Exercise", "Weekly")
 
         # Verify both habits exist
         habits = storage.load_all_habits()

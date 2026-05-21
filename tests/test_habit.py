@@ -100,7 +100,7 @@ class TestHabit:
 
         assert "Habit" in repr_str
         assert "Exercise" in repr_str
-        assert "daily" in repr_str
+        assert "Daily" in repr_str
         assert "completions=0" in repr_str
 
     def test_habit_repr_with_completions(self):
