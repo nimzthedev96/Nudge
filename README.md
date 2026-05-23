@@ -88,6 +88,9 @@ pytest tests/test_habit.py
 pytest -v
 ```
 
+Screenshots of the user testing of the CLI tool can be founding testing_screenshots/cli
+
+
 ## Development
 
 ### Code Quality Tools
@@ -119,6 +122,7 @@ nudge/
 ├── habits/              # Habit model
 ├── habit_manager/       # Habit management service
 ├── storage/             # Database operations
+├── testing_screenshots  # Contains screenshots for CLI testing
 tests/                   # Unit tests
 ```
 
