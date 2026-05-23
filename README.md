@@ -29,11 +29,22 @@ Nudge supports five different periodicity types for habits:
 
 ## Installation
 
+### Prerequisites
+
+Install python
+
+```bash
+# Windows
+winget install Python.Python.3.12
+
+# macOS/Linux
+brew install python@3.12
+```
 ### 1. Clone the Repository
 
 ```bash
-git clone github.com/nimzthedev96/Nudge
-cd nudge
+git clone https://github.com/nimzthedev96/Nudge.git
+cd Nudge
 ```
 
 ### 2. Create Virtual Environment
