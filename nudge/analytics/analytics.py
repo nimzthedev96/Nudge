@@ -25,7 +25,7 @@ def get_all_tracked_habits(habits: List["Habit"]) -> List["Habit"]:
     return [habit for habit in habits if len(habit.completion_timestamps) > 0]
 
 
-def get_longest_streak_for_all(habits: List[Habit]) -> int:
+def get_longest_streak_for_all(habits: List["Habit"]) -> int:
     """Return the longest run streak of all defined habits."""
     longest_streak = 0
     for habit in habits:
@@ -35,7 +35,7 @@ def get_longest_streak_for_all(habits: List[Habit]) -> int:
     return longest_streak
 
 
-def get_best_performing_habit(habits: List[Habit]) -> "Habit | None":
+def get_best_performing_habit(habits: List["Habit"]) -> "Habit | None":
     """Return the habit with the longest streak (using total completions as a tiebreaker).
 
     Args:

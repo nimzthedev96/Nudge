@@ -40,6 +40,9 @@ winget install Python.Python.3.12
 # macOS/Linux
 brew install python@3.12
 ```
+
+After installation, you may need to re-open a new terminal session.
+
 ### 1. Clone the Repository
 
 ```bash
