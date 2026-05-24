@@ -42,7 +42,7 @@ def is_completed_today(habit: "Habit") -> bool:
     return latest_completion.date() == today
 
 
-def display_today_view(manager: HabitManager) -> None:
+def display_today_view(manager: "HabitManager") -> None:
     """Display today's habit view with streaks and progress."""
     try:
         habits = manager.storage.load_all_habits()
@@ -118,7 +118,7 @@ def display_menu() -> Optional[str]:
     return choice  # type: ignore
 
 
-def main(manager: HabitManager) -> None:
+def main(manager: "HabitManager") -> None:
     """Main CLI entry point."""
     # Display welcome banner
     console.print(
@@ -205,7 +205,7 @@ def select_habit(
     return selected  # type: ignore
 
 
-def create_habit(manager: HabitManager) -> None:
+def create_habit(manager: "HabitManager") -> None:
     """Create a new habit through interactive CLI prompts.
 
     Prompts the user for habit name and periodicity, then creates the habit
@@ -235,7 +235,7 @@ def create_habit(manager: HabitManager) -> None:
         console.print(f"[red]✗ Error creating habit: {e}[/red]")
 
 
-def mark_complete(manager: HabitManager) -> None:
+def mark_complete(manager: "HabitManager") -> None:
     """Mark a selected habit as complete and display streak achievements.
 
     Allows user to select a habit from interactive menu, marks it complete,
@@ -274,7 +274,7 @@ def mark_complete(manager: HabitManager) -> None:
         console.print(f"[red]✗ Error: {e}[/red]")
 
 
-def view_analytics(manager: HabitManager) -> None:
+def view_analytics(manager: "HabitManager") -> None:
     """View habit analytics and statistics.
 
     Displays an analytics sub-menu with options for different views:
@@ -316,7 +316,7 @@ def view_analytics(manager: HabitManager) -> None:
             view_graphs(manager)
 
 
-def display_summary_dashboard(manager: HabitManager) -> None:
+def display_summary_dashboard(manager: "HabitManager") -> None:
     """Display an overview dashboard with global statistics and habit summary table.
 
     Args:
@@ -377,7 +377,7 @@ def display_summary_dashboard(manager: HabitManager) -> None:
     console.input("\n[cyan]Press Enter to return to analytics menu...[/cyan]")
 
 
-def view_detailed_habit_analysis(manager: HabitManager) -> None:
+def view_detailed_habit_analysis(manager: "HabitManager") -> None:
     """Display detailed analytics for a selected habit.
 
     Allows user to select a habit and view detailed information including
@@ -422,7 +422,7 @@ def view_detailed_habit_analysis(manager: HabitManager) -> None:
     console.input("\n[cyan]Press Enter to return to analytics menu...[/cyan]")
 
 
-def view_graphs(manager: HabitManager) -> None:
+def view_graphs(manager: "HabitManager") -> None:
     """Display graph visualization options for habit analytics.
 
     Allows user to select different graph types to visualize habit data
@@ -463,7 +463,7 @@ def view_graphs(manager: HabitManager) -> None:
             graphs.render_periodicity_distribution(manager)
 
 
-def delete_habit(manager: HabitManager) -> None:
+def delete_habit(manager: "HabitManager") -> None:
     """Delete a selected habit after user confirmation.
 
     Allows user to select a habit to delete and requires confirmation
