@@ -53,7 +53,7 @@ def get_best_performing_habit(habits: List["Habit"]) -> "Habit | None":
     )
 
 
-def get_longest_streak(habit: Habit) -> int:
+def get_longest_streak(habit: "Habit") -> int:
     """Calculate the longest run streak for a given habit based on periodicity.
 
     Iterates through all completion timestamps, detecting streaks and breaks,
